@@ -200,13 +200,18 @@ def create_truth_table_column(suspect):
     # get proposition
     prop = suspect.proposition
 
+    # prop names
+    prop_names = prop[0]
+
     # prop type
     prop_type = prop[1]
 
+    # new blank column
     column = []
 
     # check proposition type
     if prop_type == 'proposition':
+
         # not a compound proposition
         # equal to initial proposition of same name
         for num in range(rows):
@@ -215,14 +220,77 @@ def create_truth_table_column(suspect):
         # update column header to proposition
         column[0] = suspect.statement
 
+        # return the new column
         return column
 
     elif prop_type == 'conjunction':
-        pass
+
+        # go row by row
+        for row in range(rows):
+
+            # get first truth val
+            val1 = get_truth_vals(truth_table, prop_names[0], row)
+
+            # get second truth val
+            val2 = get_truth_vals(truth_table, prop_names[1], row)
+
+            # get truth value for conjunction
+            truth_val = conjunction_rules(val1, val2)
+
+            # append column with truth val
+            column.append(truth_val)
+
+        # update column header to proposition
+        column[0] = suspect.statement
+
+        # return the new column
+        return column
+
     elif prop_type == 'disjunction':
-        pass
+
+        # go row by row
+        for row in range(rows):
+
+            # get first truth val
+            val1 = get_truth_vals(truth_table, prop_names[0], row)
+
+            # get second truth val
+            val2 = get_truth_vals(truth_table, prop_names[1], row)
+
+            # get truth value for disjunction
+            truth_val = disjunction_rules(val1, val2)
+
+            # append column with truth val
+            column.append(truth_val)
+
+        # update column header to proposition
+        column[0] = suspect.statement
+
+        # return the new column
+        return column
+
     elif prop_type == 'implication':
-        pass
+
+        # go row by row
+        for row in range(rows):
+
+            # get first truth val
+            val1 = get_truth_vals(truth_table, prop_names[0], row)
+
+            # get second truth val
+            val2 = get_truth_vals(truth_table, prop_names[1], row)
+
+            # get truth value for implication
+            truth_val = disjunction_rules(val1, val2)
+
+            # append column with truth val
+            column.append(truth_val)
+
+        # update column header to proposition
+        column[0] = suspect.statement
+
+        # return the new column
+        return column
 
 
 # adds columns to truth table using suspects' statements
