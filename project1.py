@@ -125,6 +125,10 @@ suspects.append(ted)
 
 # TRUTH TABLE GENERATION
 
+# number of rows needed = 2^len(suspects), +1 for header
+rows = (2 ** len(suspects)) + 1
+
+
 # generates T/F strings of given length
 def create_TF_string(total, repeat):
     pattern = []
@@ -146,9 +150,10 @@ def create_TF_string(total, repeat):
 
 
 # generates initial truth table
-def create_truth_table(suspect_num, suspects):
-    # number of rows needed = 2^suspect_num, +1 for header
-    rows = (2 ** suspect_num) + 1
+def create_truth_table(rows, suspects):
+
+    # number of suspects
+    suspect_num = len(suspects)
 
     # of columns needed is twice the number of suspects
     # each suspect has an "x is guilty" proposition, as well as their statement
@@ -177,8 +182,47 @@ def create_truth_table(suspect_num, suspects):
 
 
 # create initial truth table
-truth_table = create_truth_table(len(suspects), suspects)
-print(truth_table)
+truth_table = create_truth_table(rows, suspects)
+
+
+# gets truth values by name and row num
+def get_truth_vals(table, name, row):
+    # find the correct column by name
+    for column in table:
+        # if name matches, return value at given row
+        if column[0] == name:
+            return column[row]
+
+
+# creates new column for truth table
+def create_truth_table_column(suspect):
+
+    # get proposition
+    prop = suspect.proposition
+
+    # prop type
+    prop_type = prop[1]
+
+    column = []
+
+    # check proposition type
+    if prop_type == 'proposition':
+        # not a compound proposition
+        # equal to initial proposition of same name
+        for num in range(rows):
+            column.append(get_truth_vals(truth_table, prop[0][0], num))
+
+        # update column header to proposition
+        column[0] = suspect.statement
+
+        return column
+
+    elif prop_type == 'conjunction':
+        pass
+    elif prop_type == 'disjunction':
+        pass
+    elif prop_type == 'implication':
+        pass
 
 
 # adds columns to truth table using suspects' statements
@@ -186,4 +230,13 @@ def add_propositions_to_table(suspects):
 
     # iterate through each suspect and add propositions
     for suspect in suspects:
-        pass
+
+        # create new column from suspect proposition
+        column = create_truth_table_column(suspect)
+
+        # add the new column to truth table
+        truth_table.append(column)
+
+
+add_propositions_to_table(suspects)
+print(truth_table)
