@@ -16,6 +16,7 @@ class Accusation:
 
     name = ''
     statement = ''
+    prop_type = ''
 
     def __init__(self, name):
         self.name = name
@@ -28,6 +29,7 @@ class Accusation:
         "<name> is guilty."
         '''
         self.statement = f'{name} is guilty.'
+        self.prop_type = 'proposition'
 
     def create_conjunction(self, name1, name2):
         '''
@@ -35,6 +37,7 @@ class Accusation:
         "<name1> and <name2> are guilty."
         '''
         self.statement = f'{name1} and {name2} are guilty.'
+        self.prop_type = 'conjunction'
 
     def create_disjunction(self, name1, name2):
         '''
@@ -42,6 +45,7 @@ class Accusation:
         "At least one of <name1> or <name2> is guilty."
         '''
         self.statement = f'At least one of {name1} or {name2} is guilty.'
+        self.prop_type = 'disjunction'
 
     def create_implication(self, name1, name2):
         '''
@@ -49,6 +53,7 @@ class Accusation:
         "If <name1> is guilty, then so is <name2>."
         '''
         self.statement = f'If {name1} is guilty, then so is {name2}.'
+        self.prop_type = 'implication'
 
 
 # SUSPECT ACCUSATIONS
@@ -104,14 +109,17 @@ def create_truth_table(suspect_num, suspects):
     # each suspect has a "x is guilty" proposition and their statement
     columns = suspect_num * 2
 
+    # sorted suspects initials
+    initials = [suspect[0].lower()
+                for suspect in sorted(suspects, reverse=True)]
+
     truth_table = []
 
-    for index in range(columns):
+    for index in reversed(range(columns)):
         # first half of columns
         if index < suspect_num:
-            # get name and first initial
-            suspect = suspects[index]
-            suspect_initial = suspect[0].lower()
+            # first initial
+            suspect_initial = initials[index]
 
             # get T/F pattern
             pattern = create_TF_string((rows - 1), index)
@@ -124,4 +132,5 @@ def create_truth_table(suspect_num, suspects):
     return truth_table
 
 
-print(create_truth_table(suspect_num, suspects))
+# create initial truth table
+truth_table = create_truth_table(suspect_num, suspects)
