@@ -8,9 +8,8 @@
 class Suspect:
 
     name = ''
-    initial = ''
     statement = ''
-    prop_type = ''
+    proposition = ''
 
     def __init__(self, name):
         self.name = name
@@ -24,7 +23,7 @@ class Suspect:
         "<name> is guilty."
         '''
         self.statement = f'{name} is guilty.'
-        self.prop_type = 'proposition'
+        self.proposition = ([name], 'proposition')
 
     def create_conjunction(self, name1, name2):
         '''
@@ -32,7 +31,7 @@ class Suspect:
         "<name1> and <name2> are guilty."
         '''
         self.statement = f'{name1} and {name2} are guilty.'
-        self.prop_type = 'conjunction'
+        self.proposition = ([name1, name2], 'conjunction')
 
     def create_disjunction(self, name1, name2):
         '''
@@ -40,7 +39,7 @@ class Suspect:
         "At least one of <name1> or <name2> is guilty."
         '''
         self.statement = f'At least one of {name1} or {name2} is guilty.'
-        self.prop_type = 'disjunction'
+        self.proposition = ([name1, name2], 'disjunction')
 
     def create_implication(self, name1, name2):
         '''
@@ -48,11 +47,54 @@ class Suspect:
         "If <name1> is guilty, then so is <name2>."
         '''
         self.statement = f'If {name1} is guilty, then so is {name2}.'
-        self.prop_type = 'implication'
+        self.proposition = ([name1, name2], 'implication')
+
+
+# PROPOSITION LOGIC RULES
+
+def conjunction_rules(val1, val2):
+    '''
+    Rules for conjunctions – logical AND statements
+    '''
+    if (val1 == 'T') and (val2 == 'T'):
+        return 'T'
+    elif (val1 == 'T') and (val2 == 'F'):
+        return 'F'
+    elif (val1 == 'F') and (val2 == 'T'):
+        return 'F'
+    elif (val1 == 'F') and (val2 == 'F'):
+        return 'F'
+
+
+def disjunction_rules(val1, val2):
+    '''
+    Rules for disjunctions – logical OR statements
+    '''
+    if (val1 == 'T') and (val2 == 'T'):
+        return 'T'
+    elif (val1 == 'T') and (val2 == 'F'):
+        return 'T'
+    elif (val1 == 'F') and (val2 == 'T'):
+        return 'T'
+    elif (val1 == 'F') and (val2 == 'F'):
+        return 'F'
+
+
+def implication_rules(val1, val2):
+    '''
+    Rules for implication logical statements
+    '''
+    if (val1 == 'T') and (val2 == 'T'):
+        return 'T'
+    elif (val1 == 'T') and (val2 == 'F'):
+        return 'F'
+    elif (val1 == 'F') and (val2 == 'T'):
+        return 'T'
+    elif (val1 == 'F') and (val2 == 'F'):
+        return 'T'
 
 
 # SUSPECT ACCUSATIONS
-
 suspects = []
 
 # Paul says, “Ray is guilty.”
@@ -109,26 +151,25 @@ def create_truth_table(suspect_num, suspects):
     rows = (2 ** suspect_num) + 1
 
     # of columns needed is twice the number of suspects
-    # each suspect has a "x is guilty" proposition and their statement
+    # each suspect has an "x is guilty" proposition, as well as their statement
     columns = suspect_num * 2
 
-    # sorted suspects initials
-    initials = sorted([suspect.initial for suspect in suspects], reverse=True)
-    print('INITIALS: ', initials)
+    # sorted suspects names
+    names = sorted([suspect.name for suspect in suspects], reverse=True)
 
     truth_table = []
 
     for index in reversed(range(columns)):
         # first half of columns
         if index < suspect_num:
-            # first initial
-            suspect_initial = initials[index]
+            # suspect name
+            suspect_name = names[index]
 
             # get T/F pattern
             pattern = create_TF_string((rows - 1), index)
 
             # add suspect inital to pattern as header
-            pattern = [suspect_initial] + pattern
+            pattern = [suspect_name] + pattern
 
             truth_table.append(pattern)
 
@@ -137,3 +178,12 @@ def create_truth_table(suspect_num, suspects):
 
 # create initial truth table
 truth_table = create_truth_table(len(suspects), suspects)
+print(truth_table)
+
+
+# adds columns to truth table using suspects' statements
+def add_propositions_to_table(suspects):
+
+    # iterate through each suspect and add propositions
+    for suspect in suspects:
+        pass
