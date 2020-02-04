@@ -5,21 +5,16 @@
 # every innocent suspect is telling the truth
 
 
-# suspects –– modify as needed
-suspects = ['Paul', 'Quinn', 'Ray', 'Steve', 'Ted']
-
-# number of suspects
-suspect_num = len(suspects)
-
-
-class Accusation:
+class Suspect:
 
     name = ''
+    initial = ''
     statement = ''
     prop_type = ''
 
     def __init__(self, name):
         self.name = name
+        self.initial = f'{name[0].lower()}'
 
     # Methods for building each proposition type
 
@@ -58,28 +53,35 @@ class Accusation:
 
 # SUSPECT ACCUSATIONS
 
+suspects = []
+
 # Paul says, “Ray is guilty.”
-paul_accusation = Accusation('Paul')
-paul_accusation.create_proposition('Ray')
+paul = Suspect('Paul')
+paul.create_proposition('Ray')
+suspects.append(paul)
 
 # Quinn says, “If Steve is guilty, then so is Ray.”
-quinn_accusation = Accusation('Quinn')
-quinn_accusation.create_implication('Steve', 'Ray')
+quinn = Suspect('Quinn')
+quinn.create_implication('Steve', 'Ray')
+suspects.append(quinn)
 
 # Ray says, “Both Steve and Ted are guilty.”
-ray_accusation = Accusation('Ray')
-ray_accusation.create_conjunction('Steve', 'Ted')
+ray = Suspect('Ray')
+ray.create_conjunction('Steve', 'Ted')
+suspects.append(ray)
 
 # Steve says, “Both Quinn and Ray are guilty.”
-steve_accusation = Accusation('Steve')
-steve_accusation.create_conjunction('Quinn', 'Ray')
+steve = Suspect('Steve')
+steve.create_conjunction('Quinn', 'Ray')
+suspects.append(steve)
 
 # Ted says, “At least one of Paul or Ray is guilty.”
-ted_accusation = Accusation('Ted')
-ted_accusation.create_disjunction('Paul', 'Ray')
+ted = Suspect('Ted')
+ted.create_disjunction('Paul', 'Ray')
+suspects.append(ted)
 
 
-# functions for creating truth table
+# TRUTH TABLE GENERATION
 
 # generates T/F strings of given length
 def create_TF_string(total, repeat):
@@ -101,6 +103,7 @@ def create_TF_string(total, repeat):
     return pattern
 
 
+# generates initial truth table
 def create_truth_table(suspect_num, suspects):
     # number of rows needed = 2^suspect_num, +1 for header
     rows = (2 ** suspect_num) + 1
@@ -110,8 +113,8 @@ def create_truth_table(suspect_num, suspects):
     columns = suspect_num * 2
 
     # sorted suspects initials
-    initials = [suspect[0].lower()
-                for suspect in sorted(suspects, reverse=True)]
+    initials = sorted([suspect.initial for suspect in suspects], reverse=True)
+    print('INITIALS: ', initials)
 
     truth_table = []
 
@@ -133,4 +136,4 @@ def create_truth_table(suspect_num, suspects):
 
 
 # create initial truth table
-truth_table = create_truth_table(suspect_num, suspects)
+truth_table = create_truth_table(len(suspects), suspects)
