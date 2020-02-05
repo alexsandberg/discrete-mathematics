@@ -195,7 +195,7 @@ def get_truth_vals(table, name, row):
 
 
 # creates new column for truth table
-def create_truth_table_column(suspect):
+def create_truth_table_column(truth_table, suspect):
 
     # get proposition
     prop = suspect.proposition
@@ -218,11 +218,11 @@ def create_truth_table_column(suspect):
             # equal to initial proposition of same name
             column.append(get_truth_vals(truth_table, prop[0][0], row))
 
-            # update column header to proposition
-            column[0] = suspect.statement
-
-            # return the new column
-            return column
+            # update column header to dict with name and statement
+            column[0] = {
+                'suspect_name': suspect.name,
+                'statement': suspect.statement
+            }
 
         else:
             # get first truth val
@@ -246,25 +246,80 @@ def create_truth_table_column(suspect):
             # append column with truth val
             column.append(truth_val)
 
-    # update column header to proposition
-    column[0] = suspect.statement
+    # update column header to dict with name and statement
+    column[0] = {
+        'suspect_name': suspect.name,
+        'statement': suspect.statement
+    }
 
     # return the new column
     return column
 
 
 # adds columns to truth table using suspects' statements
-def add_propositions_to_table(suspects):
+def add_propositions_to_table(truth_table, suspects):
+
+    table = truth_table
 
     # iterate through each suspect and add propositions
     for suspect in suspects:
 
         # create new column from suspect proposition
-        column = create_truth_table_column(suspect)
+        column = create_truth_table_column(table, suspect)
 
         # add the new column to truth table
-        truth_table.append(column)
+        table.append(column)
+
+    return table
 
 
-add_propositions_to_table(suspects)
-print(truth_table)
+truth_table = add_propositions_to_table(truth_table, suspects)
+
+print('TRUTH TABLE: ', truth_table[6])
+
+
+# compiles the results
+def compile_results(truth_table):
+
+    # get all results from a given row
+    # for first n results (n = number of suspects),
+    # if value is "T", that means the suspect is lying
+    # and their statement truth value should be reversed for that row
+
+    # results truth table -- copy from truth_table
+    results = truth_table
+
+    # check first n columns where n = number of suspects
+    for column in range(len(suspects)):
+
+        # store suspect name
+        name = results[column][0]
+
+        # go row by row from 1 to end
+        for row in range(1, rows):
+            # print('ROW: ', row)
+            # if value is "T", that means the suspect is lying
+            # and their statement truth value should be reversed for that row
+            if results[column][row] == 'T':
+
+                # find statement in matching column and row
+                for column2 in range(len(suspects) * 2):
+                    # print('COLUMN2: ', column2)
+
+                    # if column has a dict header with matching name
+                    if (type(results[column2][0]) is dict) and (
+                            results[column2][0]['suspect_name'] == name):
+                        pass
+                        # print('TEST PRINT: ', results[column2])
+                        # go to matching row and reverse value
+                        if (results[column2][row] == 'T'):
+                            results[column2][row] == 'F'
+                        elif (results[column2][row] == 'F'):
+                            results[column2][row] == 'T'
+
+    return results
+
+
+results = compile_results(truth_table)
+
+# print('RESULTS: ', results)
