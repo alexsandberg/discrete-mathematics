@@ -241,7 +241,7 @@ def create_truth_table_column(truth_table, suspect):
 
             elif prop_type == 'implication':
                 # get truth value for implication
-                truth_val = disjunction_rules(val1, val2)
+                truth_val = implication_rules(val1, val2)
 
             # append column with truth val
             column.append(truth_val)
