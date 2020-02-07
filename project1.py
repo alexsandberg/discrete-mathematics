@@ -1,4 +1,4 @@
-
+import copy
 
 # Rules:
 # every guilty suspect is lying
@@ -181,10 +181,6 @@ def create_truth_table(rows, suspects):
     return truth_table
 
 
-# create initial truth table
-truth_table = create_truth_table(rows, suspects)
-
-
 # gets truth values by name and row num
 def get_truth_vals(table, name, row):
     # find the correct column by name
@@ -259,7 +255,8 @@ def create_truth_table_column(truth_table, suspect):
 # adds columns to truth table using suspects' statements
 def add_propositions_to_table(truth_table, suspects):
 
-    table = truth_table
+    # copy truth table
+    table = copy.deepcopy(truth_table)
 
     # iterate through each suspect and add propositions
     for suspect in suspects:
@@ -273,11 +270,6 @@ def add_propositions_to_table(truth_table, suspects):
     return table
 
 
-truth_table = add_propositions_to_table(truth_table, suspects)
-
-print('TRUTH TABLE: ', truth_table[6])
-
-
 # compiles the results
 def compile_results(truth_table):
 
@@ -287,7 +279,10 @@ def compile_results(truth_table):
     # and their statement truth value should be reversed for that row
 
     # results truth table -- copy from truth_table
-    results = truth_table
+    results = copy.deepcopy(truth_table)
+
+    # print('RESULTS LOCATION: ', hex(id(results)))
+    # print('TRUTH TABLE LOCATION: ', hex(id(truth_table)))
 
     # check first n columns where n = number of suspects
     for column in range(len(suspects)):
@@ -309,17 +304,103 @@ def compile_results(truth_table):
                     # if column has a dict header with matching name
                     if (type(results[column2][0]) is dict) and (
                             results[column2][0]['suspect_name'] == name):
-                        pass
-                        # print('TEST PRINT: ', results[column2])
+
                         # go to matching row and reverse value
                         if (results[column2][row] == 'T'):
-                            results[column2][row] == 'F'
+                            # print('BEFORE: ', results[column2][row])
+                            results[column2][row] = 'F'
+                            # print('AFTER: ', results[column2][row])
+                            break
                         elif (results[column2][row] == 'F'):
-                            results[column2][row] == 'T'
+                            results[column2][row] = 'T'
 
     return results
 
 
+# analyze the results
+def analyze_results(results):
+
+    # go row by row through suspect statements
+    # find row with only T's
+
+    conclusions, names = [], []
+
+    # iterates through all rows
+    for row in range(0, rows):
+
+        statements, guilt_props = [], []
+
+        # first half of columns (guilt propositions)
+        for column in range(len(suspects)):
+
+            # first row, add names
+            if row == 0:
+                names.append(results[column][row])
+            else:
+                # add props to list
+                guilt_props.append(results[column][row])
+
+        # second half of columns (suspect statements)
+        for column in range(len(suspects), len(suspects) * 2):
+
+            # skip first row (headers)
+            if row == 0:
+                break
+            else:
+                # add statements to list
+                statements.append(results[column][row])
+
+        # print(f'Props  {row}: ', guilt_props)
+        # print(f'Statements  {row}: ', statements)
+        # print('\n')
+
+        # if all statements are 'T', add to conclusions
+        if all(item == 'T' for item in statements):
+
+            # add name and guilt proposition for each to conclusions
+            for num in range(len(guilt_props)):
+                # print(num)
+                verdict = (names[num], guilt_props[num])
+
+                conclusions.append(verdict)
+
+    return conclusions
+
+
+# generates results string
+def results_string(conclusions):
+
+    results = ''
+
+    # read conculsions and add to results string
+    for conclusion in conclusions:
+
+        # if T, suspect is guilty
+        if conclusion[1] == 'T':
+            results += f'{conclusion[0]} is guilty.\n'
+
+        # if F, suspect is innocent
+        if conclusion[1] == 'F':
+            results += f'{conclusion[0]} is innocent.\n'
+
+    return results
+
+
+# create initial truth table
+truth_table = create_truth_table(rows, suspects)
+
+
+# add propositions to truth table
+truth_table = add_propositions_to_table(truth_table, suspects)
+
+# compile the results
 results = compile_results(truth_table)
 
-# print('RESULTS: ', results)
+# analyze the results
+conclusions = analyze_results(results)
+
+# process the results!
+output = results_string(conclusions)
+
+# print the output
+print(output)
