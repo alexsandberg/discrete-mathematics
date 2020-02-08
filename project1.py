@@ -95,6 +95,8 @@ def implication_rules(val1, val2):
 
 
 # SUSPECT ACCUSATIONS
+
+
 suspects = []
 
 # Paul says, “Ray is guilty.”
@@ -350,19 +352,19 @@ def analyze_results(results):
                 # add statements to list
                 statements.append(results[column][row])
 
-        # print(f'Props  {row}: ', guilt_props)
-        # print(f'Statements  {row}: ', statements)
-        # print('\n')
-
         # if all statements are 'T', add to conclusions
-        if all(item == 'T' for item in statements):
+        if len(statements) != 0 and all(item == 'T' for item in statements):
+
+            conclusion = []
 
             # add name and guilt proposition for each to conclusions
             for num in range(len(guilt_props)):
                 # print(num)
                 verdict = (names[num], guilt_props[num])
 
-                conclusions.append(verdict)
+                conclusion.append(verdict)
+
+            conclusions.append(conclusion)
 
     return conclusions
 
@@ -370,25 +372,40 @@ def analyze_results(results):
 # generates results string
 def results_string(conclusions):
 
+    # get number of conclusions
+    num = len(conclusions)
+
     results = ''
+
+    if num == 1:
+        results += f'\n{num} possible conclusion: \n'
+    else:
+        results += f'\n{num} possible conclusions: \n'
+
+    # set num back to 1
+    num = 1
 
     # read conculsions and add to results string
     for conclusion in conclusions:
 
-        # if T, suspect is guilty
-        if conclusion[1] == 'T':
-            results += f'{conclusion[0]} is guilty.\n'
+        results += f'\n{num}.\n'
 
-        # if F, suspect is innocent
-        if conclusion[1] == 'F':
-            results += f'{conclusion[0]} is innocent.\n'
+        for verdict in conclusion:
+            # if T, suspect is guilty
+            if verdict[1] == 'T':
+                results += f'{verdict[0]} is guilty.\n'
+
+            # if F, suspect is innocent
+            if verdict[1] == 'F':
+                results += f'{verdict[0]} is innocent.\n'
+
+        num += 1
 
     return results
 
 
 # create initial truth table
 truth_table = create_truth_table(rows, suspects)
-
 
 # add propositions to truth table
 truth_table = add_propositions_to_table(truth_table, suspects)
