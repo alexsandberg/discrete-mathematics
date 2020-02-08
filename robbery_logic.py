@@ -17,6 +17,13 @@ class Suspect:
 
     # Methods for building each proposition type
 
+    def no_statement(self):
+        '''
+        Indicates that suspect has no statement
+        '''
+        self.statement = 'No statement.'
+        self.proposition = (None, 'no_statement')
+
     def create_proposition(self, name):
         '''
         Builds a proposition from name of the accused in the form
@@ -94,35 +101,66 @@ def implication_rules(val1, val2):
         return 'T'
 
 
-# SUSPECT ACCUSATIONS
+# SUSPECTS
 
 
 suspects = []
 
-# Paul says, “Ray is guilty.”
+
+# Paul -------------------------------
 paul = Suspect('Paul')
+
+# Paul statement: “Ray is guilty.”
 paul.create_proposition('Ray')
 suspects.append(paul)
 
-# Quinn says, “If Steve is guilty, then so is Ray.”
+# ------------------------------------
+
+
+# Quinn ------------------------------
 quinn = Suspect('Quinn')
-quinn.create_implication('Steve', 'Ray')
+
+# Quinn statement: 'No statement'
+quinn.no_statement()
+
+# UNCOMMENT BELOW TO CHANGE STATEMENT
+# “If Steve is guilty, then so is Ray.”
+# quinn.create_implication('Steve', 'Ray')
+
 suspects.append(quinn)
 
-# Ray says, “Both Steve and Ted are guilty.”
+# ------------------------------------
+
+
+# Ray --------------------------------
 ray = Suspect('Ray')
+
+# Ray says, “Both Steve and Ted are guilty.”
 ray.create_conjunction('Steve', 'Ted')
+
 suspects.append(ray)
 
-# Steve says, “Both Quinn and Ray are guilty.”
+# ------------------------------------
+
+
+# Steve ------------------------------
 steve = Suspect('Steve')
+
+# Steve says, “Both Quinn and Ray are guilty.”
 steve.create_conjunction('Quinn', 'Ray')
 suspects.append(steve)
 
-# Ted says, “At least one of Paul or Ray is guilty.”
+# ------------------------------------
+
+
+# Ted --------------------------------
 ted = Suspect('Ted')
+
+# Ted says, “At least one of Paul or Ray is guilty.”
 ted.create_disjunction('Paul', 'Ray')
 suspects.append(ted)
+
+# ------------------------------------
 
 
 # TRUTH TABLE GENERATION
@@ -211,7 +249,18 @@ def create_truth_table_column(truth_table, suspect):
     for row in range(rows):
 
         # check proposition type
-        if prop_type == 'proposition':
+        if prop_type == 'no_statement':
+
+            # append an empty column
+            column.append('')
+
+            # update column header to dict with name and statement
+            column[0] = {
+                'suspect_name': suspect.name,
+                'statement': suspect.statement
+            }
+
+        elif prop_type == 'proposition':
             # not a compound proposition
             # equal to initial proposition of same name
             column.append(get_truth_vals(truth_table, prop[0][0], row))
@@ -283,9 +332,6 @@ def compile_results(truth_table):
     # results truth table -- copy from truth_table
     results = copy.deepcopy(truth_table)
 
-    # print('RESULTS LOCATION: ', hex(id(results)))
-    # print('TRUTH TABLE LOCATION: ', hex(id(truth_table)))
-
     # check first n columns where n = number of suspects
     for column in range(len(suspects)):
 
@@ -294,7 +340,7 @@ def compile_results(truth_table):
 
         # go row by row from 1 to end
         for row in range(1, rows):
-            # print('ROW: ', row)
+
             # if value is "T", that means the suspect is lying
             # and their statement truth value should be reversed for that row
             if results[column][row] == 'T':
@@ -348,6 +394,9 @@ def analyze_results(results):
             # skip first row (headers)
             if row == 0:
                 break
+            # skip 'no statement' rows
+            elif results[column][row] == '':
+                continue
             else:
                 # add statements to list
                 statements.append(results[column][row])
