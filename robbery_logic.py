@@ -1,12 +1,21 @@
 import copy
 
+
+# Author: Alex Sandberg-Bernard
+# Johns Hopkins University
+# Discrete Mathematics – EN.605.203.81.SP20
+
 # Rules:
 # every guilty suspect is lying
 # every innocent suspect is telling the truth
 
 
 class Suspect:
+    '''
+    Class for organizing statements and attributes of suspects
+    '''
 
+    # class attributes
     name = ''
     statement = ''
     proposition = ''
@@ -15,7 +24,7 @@ class Suspect:
         self.name = name
         self.initial = f'{name[0].lower()}'
 
-    # Methods for building each proposition type
+    # methods for building each proposition type
 
     def no_statement(self):
         '''
@@ -103,7 +112,7 @@ def implication_rules(val1, val2):
 
 # SUSPECTS
 
-
+# list for storing suspects
 suspects = []
 
 
@@ -113,7 +122,6 @@ paul = Suspect('Paul')
 # Paul statement: “Ray is guilty.”
 paul.create_proposition('Ray')
 suspects.append(paul)
-
 # ------------------------------------
 
 
@@ -121,14 +129,14 @@ suspects.append(paul)
 quinn = Suspect('Quinn')
 
 # Quinn statement: 'No statement'
-quinn.no_statement()
+# UNCOMMENT BELOW TO USE 'NO STATEMENT'
+# quinn.no_statement()
 
-# UNCOMMENT BELOW TO CHANGE STATEMENT
 # “If Steve is guilty, then so is Ray.”
-# quinn.create_implication('Steve', 'Ray')
+# UNCOMMENT BELOW TO USE STATEMENT
+quinn.create_implication('Steve', 'Ray')
 
 suspects.append(quinn)
-
 # ------------------------------------
 
 
@@ -139,7 +147,6 @@ ray = Suspect('Ray')
 ray.create_conjunction('Steve', 'Ted')
 
 suspects.append(ray)
-
 # ------------------------------------
 
 
@@ -149,7 +156,6 @@ steve = Suspect('Steve')
 # Steve says, “Both Quinn and Ray are guilty.”
 steve.create_conjunction('Quinn', 'Ray')
 suspects.append(steve)
-
 # ------------------------------------
 
 
@@ -159,7 +165,6 @@ ted = Suspect('Ted')
 # Ted says, “At least one of Paul or Ray is guilty.”
 ted.create_disjunction('Paul', 'Ray')
 suspects.append(ted)
-
 # ------------------------------------
 
 
@@ -465,8 +470,12 @@ results = compile_results(truth_table)
 # analyze the results
 conclusions = analyze_results(results)
 
-# process the results!
+# process the results
 output = results_string(conclusions)
 
 # print the output
 print(output)
+
+# write results to output file
+with open('output1.txt', mode='w') as output_txt:
+    output_txt.write(output)
