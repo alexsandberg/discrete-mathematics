@@ -12,7 +12,9 @@ import copy
 
 class Suspect:
     '''
-    Class for organizing statements and attributes of suspects
+    Class for organizing statements and attributes of suspects.
+    Instance is instantiated with suspect name, i.e., Suspect('name').
+    Suspect class includes methods for generating propositions of varying types.
     '''
 
     # class attributes
@@ -22,13 +24,12 @@ class Suspect:
 
     def __init__(self, name):
         self.name = name
-        self.initial = f'{name[0].lower()}'
 
     # methods for building each proposition type
 
     def no_statement(self):
         '''
-        Indicates that suspect has no statement
+        Indicates that suspect has no statement.
         '''
         self.statement = 'No statement.'
         self.proposition = (None, 'no_statement')
@@ -36,7 +37,7 @@ class Suspect:
     def create_proposition(self, name):
         '''
         Builds a proposition from name of the accused in the form
-        "<name> is guilty."
+        "<name> is guilty." Takes single 'name' parameter.
         '''
         self.statement = f'{name} is guilty.'
         self.proposition = ([name], 'proposition')
@@ -44,7 +45,8 @@ class Suspect:
     def create_conjunction(self, name1, name2):
         '''
         Builds a conjunction from names of two accused in the form
-        "<name1> and <name2> are guilty."
+        "<name1> and <name2> are guilty." Takes two parameters, 'name1'
+        and 'name2'.
         '''
         self.statement = f'{name1} and {name2} are guilty.'
         self.proposition = ([name1, name2], 'conjunction')
@@ -53,6 +55,7 @@ class Suspect:
         '''
         Builds a disjunction from names of two accused in the form
         "At least one of <name1> or <name2> is guilty."
+        Takes two parameters, 'name1' and 'name2'.
         '''
         self.statement = f'At least one of {name1} or {name2} is guilty.'
         self.proposition = ([name1, name2], 'disjunction')
@@ -61,6 +64,7 @@ class Suspect:
         '''
         Builds a disjunction from names of two accused in the form
         "If <name1> is guilty, then so is <name2>."
+        Takes two parameters, 'name1' and 'name2'.
         '''
         self.statement = f'If {name1} is guilty, then so is {name2}.'
         self.proposition = ([name1, name2], 'implication')
@@ -70,7 +74,9 @@ class Suspect:
 
 def conjunction_rules(val1, val2):
     '''
-    Rules for conjunctions – logical AND statements
+    Rules for conjunctions – logical AND statements.
+    Accepts two truth values as parameters.
+    Each must be either 'T' or 'F'.
     '''
     if (val1 == 'T') and (val2 == 'T'):
         return 'T'
@@ -84,7 +90,9 @@ def conjunction_rules(val1, val2):
 
 def disjunction_rules(val1, val2):
     '''
-    Rules for disjunctions – logical OR statements
+    Rules for disjunctions – logical OR statements.
+    Accepts two truth values as parameters.
+    Each must be either 'T' or 'F'.
     '''
     if (val1 == 'T') and (val2 == 'T'):
         return 'T'
@@ -98,7 +106,9 @@ def disjunction_rules(val1, val2):
 
 def implication_rules(val1, val2):
     '''
-    Rules for implication logical statements
+    Rules for implication logical statements.
+    Accepts two truth values as parameters.
+    Each must be either 'T' or 'F'.
     '''
     if (val1 == 'T') and (val2 == 'T'):
         return 'T'
@@ -174,35 +184,48 @@ suspects.append(ted)
 rows = (2 ** len(suspects)) + 1
 
 
-# generates T/F strings of given length
 def create_TF_string(total, repeat):
+    '''
+    Generates list with string entries in alternating pattern
+    of 'T's and 'F's. 'total' parameter should be equal to number
+    of rows in table, which will equal the length of the output list.
+    'repeat' should equal how many times each letter is repeated before
+    switching to the other letter.
+    '''
+
+    # list for storing output pattern
     pattern = []
 
     # iterations = num of times pattern repeats
+    # each iteration is one set of 'T''F' pattern
     iterations = int(total / 2 ** (repeat + 1))
 
+    # iterate through length of iterations and add Ts and Fs to pattern list
     for row in range(iterations):
 
-        # add T's
+        # add 'T's
         for index in range(2**repeat):
             pattern.append('T')
 
-        # add F's
+        # add 'F's
         for index in range(2**repeat):
             pattern.append('F')
 
+    # return output pattern
     return pattern
 
 
-# generates initial truth table
 def create_truth_table(rows, suspects):
+    '''
+    Generates initial truth table.
+    '''
 
-    # number of suspects
-    suspect_num = len(suspects)
+    # number of columns = number of suspects
+    columns = len(suspects)
 
-    # of columns needed is twice the number of suspects
+    # number of columns needed is twice the number of suspects
     # each suspect has an "x is guilty" proposition, as well as their statement
-    columns = suspect_num * 2
+    # columns = suspect_num * 2
 
     # sorted suspects names
     names = sorted([suspect.name for suspect in suspects], reverse=True)
@@ -210,18 +233,16 @@ def create_truth_table(rows, suspects):
     truth_table = []
 
     for index in reversed(range(columns)):
-        # first half of columns
-        if index < suspect_num:
-            # suspect name
-            suspect_name = names[index]
+        # suspect name
+        suspect_name = names[index]
 
-            # get T/F pattern
-            pattern = create_TF_string((rows - 1), index)
+        # get T/F pattern
+        pattern = create_TF_string((rows - 1), index)
 
-            # add suspect inital to pattern as header
-            pattern = [suspect_name] + pattern
+        # add suspect inital to pattern as header
+        pattern = [suspect_name] + pattern
 
-            truth_table.append(pattern)
+        truth_table.append(pattern)
 
     return truth_table
 
@@ -374,7 +395,7 @@ def compile_results(truth_table):
 def analyze_results(results):
 
     # go row by row through suspect statements
-    # find row with only T's
+    # find row with only 'T's
 
     conclusions, names = [], []
 
