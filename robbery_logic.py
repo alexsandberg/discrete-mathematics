@@ -133,12 +133,7 @@ suspects.append(paul)
 # Quinn ------------------------------
 quinn = Suspect('Quinn')
 
-# Quinn statement: 'No statement'
-# UNCOMMENT BELOW TO USE 'NO STATEMENT'
-# quinn.no_statement()
-
-# “If Steve is guilty, then so is Ray.”
-# UNCOMMENT BELOW TO USE STATEMENT
+# Quinn statement: “If Steve is guilty, then so is Ray.”
 quinn.create_implication('Steve', 'Ray')
 
 suspects.append(quinn)
@@ -525,6 +520,6 @@ output = results_string(conclusions)
 # print the output
 print(output)
 
-# write results to output file
+# write results to output1.txt file
 with open('output1.txt', mode='w') as output_txt:
     output_txt.write(output)
