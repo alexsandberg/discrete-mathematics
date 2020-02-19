@@ -1,20 +1,15 @@
 import copy
 
-
 # Author: Alex Sandberg-Bernard
 # Johns Hopkins University
 # Discrete Mathematics – EN.605.203.81.SP20
-
-# Rules:
-# every guilty suspect is lying
-# every innocent suspect is telling the truth
 
 
 class Suspect:
     '''
     Class for organizing statements and attributes of suspects.
     Instance is instantiated with suspect name, i.e., Suspect('name').
-    Suspect class includes methods for generating propositions of varying types.
+    Suspect class includes methods for generating propositions of varying type.
     '''
 
     # class attributes
@@ -217,15 +212,15 @@ def create_TF_string(total, repeat):
 
 def create_truth_table(rows, suspects):
     '''
-    Generates initial truth table.
+    Generates the initial truth table. Calls create_TF_string to get
+    T/F patterns so that each row of truth table is a permutation
+    based on the number of suspects. Each column is given a header
+    with the name of the suspect, and each column represents the proposition
+    'X is guilty' for the given suspect X. Takes 'suspects' list as param.
     '''
 
     # number of columns = number of suspects
     columns = len(suspects)
-
-    # number of columns needed is twice the number of suspects
-    # each suspect has an "x is guilty" proposition, as well as their statement
-    # columns = suspect_num * 2
 
     # sorted suspects names
     names = sorted([suspect.name for suspect in suspects], reverse=True)
@@ -247,8 +242,13 @@ def create_truth_table(rows, suspects):
     return truth_table
 
 
-# gets truth values by name and row num
 def get_truth_vals(table, name, row):
+    '''
+    Returns truth value for a given name and row.
+    Takes parameters 'name', which must be one of the suspect's
+    names, and 'row', which must be an integer value.
+    '''
+
     # find the correct column by name
     for column in table:
         # if name matches, return value at given row
@@ -256,8 +256,16 @@ def get_truth_vals(table, name, row):
             return column[row]
 
 
-# creates new column for truth table
 def create_truth_table_column(truth_table, suspect):
+    '''
+    Creates a new column based on the proposition of a given suspect
+    and returns the new column. Takes the truth table as 1st parameter
+    and Suspect instance as 2nd parameter. The suspect's proposition
+    information is extracted to determine which guilt statements are
+    being referenced, and for each row in the table, the appropriate
+    logic rule function is called to determine truth or falsity
+    of the statement based on the truth values of the guilt propositions.
+    '''
 
     # get proposition
     prop = suspect.proposition
@@ -329,8 +337,14 @@ def create_truth_table_column(truth_table, suspect):
     return column
 
 
-# adds columns to truth table using suspects' statements
 def add_propositions_to_table(truth_table, suspects):
+    '''
+    Adds suspect propositions to truth table as columns.
+    Takes truth table as 1st parameter and list of suspects as 2nd parameter.
+    Iterates through each suspect, calls create_truth_table_column
+    with suspect, then adds returned column to copied table.
+    Returns new truth table.
+    '''
 
     # copy truth table
     table = copy.deepcopy(truth_table)
@@ -344,16 +358,20 @@ def add_propositions_to_table(truth_table, suspects):
         # add the new column to truth table
         table.append(column)
 
+    # return the updated truth table
     return table
 
 
-# compiles the results
 def compile_results(truth_table):
-
-    # get all results from a given row
-    # for first n results (n = number of suspects),
-    # if value is "T", that means the suspect is lying
-    # and their statement truth value should be reversed for that row
+    '''
+    Complies the results from the truth table, applying the rules that
+    every guilty suspect is lying and every innocent suspect is telling
+    the truth. Going row-by-row, for any guilt statement that has
+    a value of 'T', that suspect's statement within the same row will
+    have its truth value reversed, because that suspect is lying.
+    Function takes truth table as a parameters and returns a processed
+    copy of the truth table.
+    '''
 
     # results truth table -- copy from truth_table
     results = copy.deepcopy(truth_table)
@@ -388,20 +406,25 @@ def compile_results(truth_table):
                         elif (results[column2][row] == 'F'):
                             results[column2][row] = 'T'
 
+    # return processed copy of truth table
     return results
 
 
-# analyze the results
 def analyze_results(results):
+    '''
+    Analyzes the processed truth table and returns conclusions.
+    Taking results table as the parameter, each row of suspect statements
+    is read, and any row with only 'T' values is considered a possible
+    conclusion. All possible conclusions are returned in list form.
+    '''
 
-    # go row by row through suspect statements
-    # find row with only 'T's
-
+    # lists for storing conclusions and names
     conclusions, names = [], []
 
     # iterates through all rows
     for row in range(0, rows):
 
+        # lists for storing statements and guilt propositions
         statements, guilt_props = [], []
 
         # first half of columns (guilt propositions)
@@ -441,11 +464,16 @@ def analyze_results(results):
 
             conclusions.append(conclusion)
 
+    # return all possible conclusions as list
     return conclusions
 
 
-# generates results string
 def results_string(conclusions):
+    '''
+    Generates string of results. Takes conclusions list as parameter,
+    and generates string in form of "<name> is guilty/innocent".
+    Returns string output with all suspects' guilt or innocence.
+    '''
 
     # get number of conclusions
     num = len(conclusions)
