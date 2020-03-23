@@ -1,2 +1,6 @@
+env
+*.zip
 *.pdf
 .vscode
+robbery_logic2.py
+project_docs
