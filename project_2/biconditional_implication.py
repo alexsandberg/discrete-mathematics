@@ -7,7 +7,14 @@ from tabulate import tabulate
 import sys
 
 # n represents the number of propositions in the chained biconditional
-n = int(sys.argv[1])
+n = sys.argv[1]
+
+# cast n to int
+try:
+    n = int(n)
+except ValueError as e:
+    print(e)
+    sys.exit('argument must be of type integer')
 
 # validate input is > 2
 if (n < 2):
