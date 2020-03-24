@@ -38,10 +38,6 @@ def create_truth_table(rows):
     return table
 
 
-# create truth table using calculated number of rows
-truth_table = create_truth_table(rows_num)
-
-
 def get_truth_value_row(row):
     '''
     Implements biconditional logic to evaluate truth value
@@ -50,7 +46,48 @@ def get_truth_value_row(row):
     return reduce(lambda x, y: x == y, row)
 
 
-for row in truth_table:
-    print('\nROW: ')
+def compile_results(truth_table):
+    '''
+    Compiles results of truth table and formats for output. An object is generated
+    for each row and includes the row number, a string representation of each proposition,
+    a value for "m", which represents the number of True values in the row, and the overall
+    truth value for the row. A list of objects is returned.
+    '''
+
+    results = []
+
+    for row_num, row in enumerate(truth_table, start=1):
+
+        # generate string representation of each proposition val
+        row_str_list = []
+        for num, val in enumerate(row, start=1):
+            truthy = False if (val == 0) else True
+            row_str_list.append(f'p{num}: {truthy}')
+
+        # get truth value for row
+        truth_val = get_truth_value_row(row)
+
+        # m represents the number of true vals
+        m = row.count(1)
+
+        # add data to object for each row
+        row_obj = {
+            'row number': row_num,
+            'truth values': row_str_list,
+            'm': m,
+            'row truth value': truth_val
+        }
+
+        results.append(row_obj)
+
+    return results
+
+
+# create truth table using calculated number of rows
+truth_table = create_truth_table(rows_num)
+
+# compile the results
+results = compile_results(truth_table)
+
+for row in results:
     print(row)
-    print(get_truth_value_row(row))
