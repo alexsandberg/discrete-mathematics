@@ -9,6 +9,10 @@ import sys
 # n represents the number of propositions in the chained biconditional
 n = int(sys.argv[1])
 
+# validate input is > 2
+if (n < 2):
+    sys.exit("n must be at least 2")
+
 # rows needed for truth table
 rows_num = 2 ** n
 
@@ -48,6 +52,10 @@ def get_truth_value_row(row):
 
 
 def create_results_table_headers(truth_table):
+    '''
+    Creates headers for results table. Returns list with row, numbered headers
+    for each proposition, "m", and resulting compound proposition.
+    '''
 
     # generate header
     header = ["row"]
@@ -62,9 +70,7 @@ def create_results_table_headers(truth_table):
     header.append('m')  # m value
 
     # add header for final compound proposition
-    if (n == 1):
-        header.append('p1'.translate(SUB))
-    elif (n == 2):
+    if (n == 2):
         header.append(f'p1 \u2B64 p2'.translate(SUB))
     elif (n == 3):
         header.append(f'p1 \u2B64 p2 \u2B64 p3'.translate(SUB))
