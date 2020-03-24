@@ -6,6 +6,10 @@ from functools import reduce
 from tabulate import tabulate
 import sys
 
+# validate args length is 2
+if (len(sys.argv) is not 2):
+    sys.exit("program takes 2 arguments: (1) program name, (2) integer value for 'n'")
+
 # n represents the number of propositions in the chained biconditional
 n = sys.argv[1]
 
@@ -18,7 +22,7 @@ except ValueError as e:
 
 # validate input is > 2
 if (n < 2):
-    sys.exit("n must be at least 2")
+    sys.exit("'n' must be at least 2")
 
 # rows needed for truth table
 rows_num = 2 ** n
