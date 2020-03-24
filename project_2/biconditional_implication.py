@@ -3,6 +3,7 @@
 # Discrete Mathematics – EN.605.203.81.SP20
 
 from functools import reduce
+from tabulate import tabulate
 import sys
 
 # n represents the number of propositions in the chained biconditional
@@ -46,39 +47,67 @@ def get_truth_value_row(row):
     return reduce(lambda x, y: x == y, row)
 
 
-def compile_results(truth_table):
+def create_results_table_headers(truth_table):
+
+    # generate header
+    header = ["row"]
+
+    # used for subscripting output
+    SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
+
+    # add headers for each proposition
+    for num in range(n):
+        header.append(f'p{num+1}'.translate(SUB))
+
+    header.append('m')  # m value
+
+    # add header for final compound proposition
+    if (n == 1):
+        header.append('p1'.translate(SUB))
+    elif (n == 2):
+        header.append(f'p1 \u2B64 p2'.translate(SUB))
+    elif (n == 3):
+        header.append(f'p1 \u2B64 p2 \u2B64 p3'.translate(SUB))
+    else:
+        header.append(
+            f'p1 \u2B64 p2 \u2B64 \u22EF \u2B64 p{n}'.translate(SUB))
+
+    return header
+
+
+def create_results_table_body(truth_table):
     '''
-    Compiles results of truth table and formats for output. An object is generated
-    for each row and includes the row number, a string representation of each proposition,
-    a value for "m", which represents the number of True values in the row, and the overall
-    truth value for the row. A list of objects is returned.
+    Compiles results of truth table and returns in list form. Entries are lists for each row, 
+    containing the truth value of each proposition, a value for "m", which represents the number
+    of True values in the row, and the overall truth value for the row.
     '''
+
+    # reverse table so 1st row is all "T" values
+    truth_table.reverse()
 
     results = []
 
+    # add values row by row
     for row_num, row in enumerate(truth_table, start=1):
 
-        # generate string representation of each proposition val
-        row_str_list = []
-        for num, val in enumerate(row, start=1):
-            truthy = False if (val == 0) else True
-            row_str_list.append(f'p{num}: {truthy}')
+        # list for storing each row's data
+        row_result = []
 
-        # get truth value for row
-        truth_val = get_truth_value_row(row)
+        # add row number as first item
+        row_result.append(row_num)
+
+        # replace 1's and 0's with "T"'s and "F"'s
+        for val in row:
+            row_result.append('F') if val == 0 else row_result.append('T')
 
         # m represents the number of true vals
-        m = row.count(1)
+        m = row_result.count('T')
+        row_result.append(m)
 
-        # add data to object for each row
-        row_obj = {
-            'row number': row_num,
-            'truth values': row_str_list,
-            'm': m,
-            'row truth value': truth_val
-        }
+        # append overall truth value for row
+        row_result.append(get_truth_value_row(row))
 
-        results.append(row_obj)
+        results.append(row_result)
 
     return results
 
@@ -86,8 +115,17 @@ def compile_results(truth_table):
 # create truth table using calculated number of rows
 truth_table = create_truth_table(rows_num)
 
-# compile the results
-results = compile_results(truth_table)
+# create results table headers
+headers = create_results_table_headers(truth_table)
 
-for row in results:
-    print(row)
+# create results table body
+results_body = create_results_table_body(truth_table)
+
+# create table from results
+results_table = tabulate(results_body, headers=headers, tablefmt="github")
+
+print(results_table)
+
+# write results to output.txt file
+with open('output.txt', mode='w') as output_txt:
+    output_txt.write(results_table)
