@@ -143,6 +143,9 @@ results_table = tabulate(results_body, headers=headers, tablefmt="github")
 
 print(results_table)
 
+output_name = f'output_n_{n}.txt'
+
 # write results to output.txt file
-with open('output.txt', mode='w') as output_txt:
+with open(output_name, mode='w') as output_txt:
+    output_txt.write(f'\nn = {n}\n\n')
     output_txt.write(results_table)
