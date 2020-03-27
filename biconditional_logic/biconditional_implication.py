@@ -59,7 +59,7 @@ def get_truth_value_row(row):
     Implements biconditional logic to evaluate truth value
     for a row of chained biconditional propositions.
     '''
-    return 'T' if reduce(lambda x, y: x == y, row) else 'F'
+    return reduce(lambda x, y: x == y, row)
 
 
 def create_results_table_headers(truth_table):
@@ -135,11 +135,11 @@ def get_m_value_if_true(results):
 
     # go row by row
     for row in results:
-        # get truth val for row (last item)
-        truth_val = row[len(row) - 1]
+        # get truth val for row (2nd to last item)
+        truth_val = row[len(row) - 2]
 
-        # get m val for row (2nd to last item)
-        m = row[len(row) - 2]
+        # get m val for row (last item)
+        m = row[len(row) - 1]
 
         if (truth_val):
             m_values_true.append(m)
