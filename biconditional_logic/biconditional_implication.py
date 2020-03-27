@@ -59,7 +59,7 @@ def get_truth_value_row(row):
     Implements biconditional logic to evaluate truth value
     for a row of chained biconditional propositions.
     '''
-    return reduce(lambda x, y: x == y, row)
+    return 'T' if reduce(lambda x, y: x == y, row) else 'F'
 
 
 def create_results_table_headers(truth_table):
@@ -78,8 +78,6 @@ def create_results_table_headers(truth_table):
     for num in range(n):
         header.append(f'p{num+1}'.translate(SUB))
 
-    header.append('m')  # m value
-
     # add header for final compound proposition
     if (n == 2):
         header.append(f'p1 \u2B64 p2'.translate(SUB))
@@ -88,6 +86,8 @@ def create_results_table_headers(truth_table):
     else:
         header.append(
             f'p1 \u2B64 p2 \u2B64 \u22EF \u2B64 p{n}'.translate(SUB))
+
+    header.append('m')  # m value
 
     return header
 
@@ -117,16 +117,34 @@ def create_results_table_body(truth_table):
         for val in row:
             row_result.append('F') if val == 0 else row_result.append('T')
 
+        # append overall truth value for row
+        row_result.append(get_truth_value_row(row))
+
         # m represents the number of true vals
         m = row_result.count('T')
         row_result.append(m)
 
-        # append overall truth value for row
-        row_result.append(get_truth_value_row(row))
-
         results.append(row_result)
 
     return results
+
+
+def get_m_value_if_true(results):
+
+    m_values_true = []
+
+    # go row by row
+    for row in results:
+        # get truth val for row (last item)
+        truth_val = row[len(row) - 1]
+
+        # get m val for row (2nd to last item)
+        m = row[len(row) - 2]
+
+        if (truth_val):
+            m_values_true.append(m)
+
+    return set(m_values_true)
 
 
 # create truth table using calculated number of rows
@@ -138,14 +156,19 @@ headers = create_results_table_headers(truth_table)
 # create results table body
 results_body = create_results_table_body(truth_table)
 
+# get all m values when row evaluates to true
+m_vals = get_m_value_if_true(results_body)
+
 # create table from results
 results_table = tabulate(results_body, headers=headers, tablefmt="github")
 
-print(results_table)
+# print(results_table)
 
+# output file is name using n value
 output_name = f'output_n_{n}.txt'
 
 # write results to output.txt file
 with open(output_name, mode='w') as output_txt:
     output_txt.write(f'\nn = {n}\n\n')
     output_txt.write(results_table)
+    output_txt.write(f'\n\nvalues of m when row is True: {m_vals}\n\n')
