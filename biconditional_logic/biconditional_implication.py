@@ -113,7 +113,9 @@ def create_results_table_headers(truth_table, n):
         header.append(f'p{num+1}'.translate(SUB))
 
     # add header for final compound proposition
-    if (n == 2):
+    if (n == 1):
+        header.append('p1'.translate(SUB))
+    elif (n == 2):
         header.append(f'p1 \u2B64 p2'.translate(SUB))
     elif (n == 3):
         header.append(f'p1 \u2B64 p2 \u2B64 p3'.translate(SUB))
