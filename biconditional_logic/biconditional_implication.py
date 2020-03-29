@@ -6,35 +6,69 @@ from functools import reduce
 from tabulate import tabulate
 import sys
 
-# validate args length is 2
-if (len(sys.argv) is not 2):
-    sys.exit("program takes 2 arguments: (1) program name, (2) integer value for 'n'")
-
-# n represents the number of propositions in the chained biconditional
-n = sys.argv[1]
-
-# cast n to int
-try:
-    n = int(n)
-except ValueError as e:
-    print(e)
-    sys.exit('argument must be of type integer')
-
-# validate input is > 2
-if (n < 2):
-    sys.exit("'n' must be at least 2")
-
-# rows needed for truth table
-rows_num = 2 ** n
+# validate args length is 2 or 3
+if ((len(sys.argv) is not 2) and (len(sys.argv) is not 3)):
+    sys.exit(
+        "program requires 2 arguments: (1) program name, (2) integer value for 'n'. Providing an optional third integer value will output results over the range of the two values of n")
 
 
-def create_truth_table(rows):
+# range bool
+n_range = False
+
+# check input
+if (len(sys.argv) is 2):
+    # n represents the number of propositions in the chained biconditional
+    n = sys.argv[1]
+
+    # cast n to int
+    try:
+        n = int(n)
+    except ValueError as e:
+        print(e)
+        sys.exit('argument must be of type integer')
+
+    # validate input is > 1
+    if (n < 1):
+        sys.exit("'n' must be at least 1")
+
+elif (len(sys.argv) is 3):
+    # set range to True
+    n_range = True
+
+    # get start and stop
+    n_start = sys.argv[1]
+    n_stop = sys.argv[2]
+
+    # cast both to int
+    try:
+        n_start = int(n_start)
+        n_stop = int(n_stop)
+    except ValueError as e:
+        print(e)
+        sys.exit('both values must be of type int')
+
+    # validate n_start is >= 1
+    if (n_start < 1):
+        sys.exit("first range value must be at least 1")
+
+    # validate n_stop > n_start
+    if (n_stop <= n_start):
+        sys.exit("second value of n must be greater than first value")
+else:
+    sys.exit(
+        "program requires 2 arguments: (1) program name, (2) integer value for 'n'. Providing an optional third integer value will output results over the range of the two values of n")
+
+
+def create_truth_table(n):
     '''
     Creates truth table using binary representation for truth values.
     Each number in the range of "rows" is translated to a binary value,
     where 0 represents False and 1 represents True. Truth table is returned
     with each entry being a row of truth values in list form.
     '''
+
+    # rows needed for truth table
+    rows = 2 ** n
 
     table = []
 
@@ -62,7 +96,7 @@ def get_truth_value_row(row):
     return reduce(lambda x, y: x == y, row)
 
 
-def create_results_table_headers(truth_table):
+def create_results_table_headers(truth_table, n):
     '''
     Creates headers for results table. Returns list with row, numbered headers
     for each proposition, "m", and resulting compound proposition.
@@ -141,34 +175,79 @@ def get_m_value_if_true(results):
         # get m val for row (last item)
         m = row[len(row) - 1]
 
+        # if row is True, get m
         if (truth_val):
             m_values_true.append(m)
 
+    # return set of m (remove duplicates)
     return set(m_values_true)
 
 
-# create truth table using calculated number of rows
-truth_table = create_truth_table(rows_num)
+def range_results(start, stop):
 
-# create results table headers
-headers = create_results_table_headers(truth_table)
+    results = []
 
-# create results table body
-results_body = create_results_table_body(truth_table)
+    # loop through range
+    for n in range(start, stop+1):
+        row_result = []
 
-# get all m values when row evaluates to true
-m_vals = get_m_value_if_true(results_body)
+        # add n val
+        row_result.append(n)
 
-# create table from results
-results_table = tabulate(results_body, headers=headers, tablefmt="github")
+        # create truth table based on n
+        truth_table = create_truth_table(n)
 
-# print(results_table)
+        # create results table body
+        results_body = create_results_table_body(truth_table)
 
-# output file is name using n value
-output_name = f'output_n_{n}.txt'
+        # get all m values when row evaluates to true
+        m_vals = get_m_value_if_true(results_body)
 
-# write results to output.txt file
-with open(output_name, mode='w') as output_txt:
-    output_txt.write(f'\nn = {n}\n\n')
-    output_txt.write(results_table)
-    output_txt.write(f'\n\nvalues of m when row is True: {m_vals}\n\n')
+        # append m vals
+        row_result.append(m_vals)
+
+        results.append(row_result)
+
+    return results
+
+
+# if range was specified
+if (n_range):
+    results = range_results(n_start, n_stop)
+
+    # create results table
+    results_table = tabulate(
+        results, headers=["n", "m values"], tablefmt="github")
+
+    # output file is name using n value
+    output_name = f'output_n_{n_start}-{n_stop}.txt'
+
+    # write results to output.txt file
+    with open(output_name, mode='w') as output_txt:
+        output_txt.write(results_table)
+
+else:
+
+    # create truth table using calculated number of rows
+    truth_table = create_truth_table(n)
+
+    # create results table headers
+    headers = create_results_table_headers(truth_table, n)
+
+    # create results table body
+    results_body = create_results_table_body(truth_table)
+
+    # get all m values when row evaluates to true
+    m_vals = get_m_value_if_true(results_body)
+
+    # create table from results
+    results_table = tabulate(results_body, headers=headers, tablefmt="github")
+
+    # output file is name using n value
+    output_name = f'output_n_{n}.txt'
+
+    # write results to output.txt file
+    with open(output_name, mode='w') as output_txt:
+        output_txt.write(f'\nn = {n}\n\n')
+        output_txt.write(results_table)
+        output_txt.write(f'\n\nvalues of m when row is True: {m_vals}\n\n')
