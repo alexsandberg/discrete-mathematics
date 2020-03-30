@@ -6,6 +6,8 @@ from functools import reduce
 from tabulate import tabulate
 import sys
 
+# -------- args processing and validation ------------
+
 # validate args length is 2 or 3
 if ((len(sys.argv) is not 2) and (len(sys.argv) is not 3)):
     sys.exit(
@@ -57,6 +59,9 @@ elif (len(sys.argv) is 3):
 else:
     sys.exit(
         "program requires 2 arguments: (1) program name, (2) integer value for 'n'. Providing an optional third integer value will output results over the range of the two values of n")
+
+
+# ----------------------------------------------------
 
 
 def create_truth_table(n):
