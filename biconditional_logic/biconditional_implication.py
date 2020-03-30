@@ -171,8 +171,14 @@ def create_results_table_body(truth_table):
 
 
 def get_m_value_if_true(results):
+    '''
+    Gets all values of m that resulted in a row evaluating to True.
+    Takes results list and goes row by row, identifying all desired values
+    of m, then returns set of m values.
+    '''
 
-    m_values_true = []
+    # set for storing unique m values
+    m_values_true = set()
 
     # go row by row
     for row in results:
@@ -184,13 +190,19 @@ def get_m_value_if_true(results):
 
         # if row is True, get m
         if (truth_val):
-            m_values_true.append(m)
+            m_values_true.add(m)
 
-    # return set of m (remove duplicates)
-    return set(m_values_true)
+    # return set
+    return m_values_true
 
 
 def range_results(start, stop):
+    '''
+    Gets results when a range of n is specified. Takes two integer values
+    as parameters and calls functions for truth table generation for each
+    value. Returns list of lists where each entry is a value of n and its
+    corresponding set of m values that produced a true compound proposition.
+    '''
 
     results = []
 
@@ -218,7 +230,9 @@ def range_results(start, stop):
     return results
 
 
-# if range was specified
+# ----- program execution ------------------------
+
+# if range was specified at runtime
 if (n_range):
     results = range_results(n_start, n_stop)
 
