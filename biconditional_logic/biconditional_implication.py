@@ -240,6 +240,9 @@ if (n_range):
     results_table = tabulate(
         results, headers=["n", "m values"], tablefmt="github")
 
+    # print the results
+    print(results_table)
+
     # output file is name using n value
     output_name = f'output_n_{n_start}-{n_stop}.txt'
 
@@ -263,6 +266,10 @@ else:
 
     # create table from results
     results_table = tabulate(results_body, headers=headers, tablefmt="github")
+
+    # print the results
+    print(f'\nn = {n}\n\n', results_table,
+          f'\n\nvalues of m when row is True: {m_vals}\n\n')
 
     # output file is name using n value
     output_name = f'output_n_{n}.txt'
