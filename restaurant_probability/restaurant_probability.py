@@ -1,5 +1,6 @@
 import random
 import sys
+from decimal import Decimal
 
 # ensure n arg is given
 if (len(sys.argv) != 2):
@@ -44,8 +45,37 @@ def run_trials(n):
     return success
 
 
-successes = run_trials(n)
+def series(n):
+    results = []
+    # run series of 10 sets of n trials
+    for i in range(10):
+        successes = run_trials(n)
+        results.append({
+            'successes': successes,
+            'probability': Decimal(successes) / Decimal(n)
+        })
+    return results
 
-print('trials: ', n)
-print('successes: ', successes)
-print(f'success probability: {successes/n}')
+
+def series_probability(results):
+    subtotal = 0
+    for entry in results:
+        subtotal += entry['probability']
+
+    return Decimal(subtotal) / Decimal(len(results))
+
+
+# get series results and probability
+results = series(n)
+probability = series_probability(results)
+
+
+print(f'\ntrials: {n}')
+
+# uncomment below for loop to print results of every set of n trials
+# for num, result in enumerate(results):
+#     print(f'\n{num+1}.')
+#     print(f"successes: {result['successes']}")
+#     print(f"set probability: {result['probability']}")
+
+print(f'\nseries success probability: {probability}\n')
