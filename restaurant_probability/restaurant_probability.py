@@ -72,10 +72,10 @@ probability = series_probability(results)
 
 print(f'\ntrials: {n}')
 
-# uncomment below for loop to print results of every set of n trials
-# for num, result in enumerate(results):
-#     print(f'\n{num+1}.')
-#     print(f"successes: {result['successes']}")
-#     print(f"set probability: {result['probability']}")
+# print out results of each set of trials
+for num, result in enumerate(results):
+    print(f'\n{num+1}.')
+    print(f"successes: {result['successes']}")
+    print(f"set probability: {result['probability']}")
 
 print(f'\nseries success probability: {probability}\n')
