@@ -2,6 +2,8 @@ import random
 import sys
 from decimal import Decimal
 
+# VALIDATION –––––––––––––––––––
+
 # ensure n arg is given
 if (len(sys.argv) != 2):
     sys.exit('program requires a single runtime argument for n (integer value)')
@@ -14,34 +16,42 @@ except ValueError as e:
     print(e)
     sys.exit('n must be integer')
 
-
 # validate n > 0
 if n < 1:
     sys.exit('please enter a value greater than 0')
 
 
-# constants
-CHARLIE = 1
-DEE = 2
-DENNIS = 3
-FRANK = 4
-MAC = 5
-JACK = 6
+# ––––––––––––––––––––––––––––––
 
 
 def trial():
-    return [random.randint(1, 6) for a in range(12)]
+    result = [random.randint(1, 6) for a in range(12)]
+    # print(result)
+    return result
 
 
 def check_trial(trial):
     return {1, 2, 3, 4, 5, 6} == set(trial)
 
 
-def run_trials(n):
+def run_trials(n, set):
     success = 0
-    for i in range(n):
-        if (check_trial(trial())):
-            success += 1
+
+    # write results to output.txt file
+    with open('restaurant_probability_trials.txt', mode='a') as output_txt:
+
+        output_txt.write(f'\n-----------------------------------------\n')
+        output_txt.write(f'\nSet {set+1}\n\n')
+
+        for i in range(n):
+            result = trial()
+            check = check_trial(result)
+            outcome = 'success' if check else 'failure'
+
+            output_txt.write(f'\n{result}\n')
+            output_txt.write(f'{outcome}\n\n')
+            if (check):
+                success += 1
     return success
 
 
@@ -49,7 +59,7 @@ def series(n):
     results = []
     # run series of 10 sets of n trials
     for i in range(10):
-        successes = run_trials(n)
+        successes = run_trials(n, i)
         results.append({
             'successes': successes,
             'probability': Decimal(successes) / Decimal(n)
@@ -70,7 +80,8 @@ results = series(n)
 probability = series_probability(results)
 
 
-print(f'\ntrials: {n}')
+print(f'\nTrials: {n}')
+print(f'\nSeries:')
 
 # print out results of each set of trials
 for num, result in enumerate(results):
@@ -78,4 +89,16 @@ for num, result in enumerate(results):
     print(f"successes: {result['successes']}")
     print(f"set probability: {result['probability']}")
 
-print(f'\nseries success probability: {probability}\n')
+print(f'\nseries success probability (average): {probability}\n')
+
+
+# write results to output.txt file
+with open('restaurant_probability_output.txt', mode='w') as output_txt:
+    output_txt.write(f'\nTrials: {n}\n\nSeries:')
+    # print out results of each set of trials
+    for num, result in enumerate(results):
+        output_txt.write(f'\n\n{num+1}.')
+        output_txt.write(f"successes: {result['successes']}\n")
+        output_txt.write(f"set probability: {result['probability']}")
+    output_txt.write(
+        f'\n\nseries success probability (average): {probability}\n')
