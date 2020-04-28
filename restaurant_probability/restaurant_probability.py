@@ -17,7 +17,7 @@ if (len(sys.argv) != 2):
 # get n from args and cast to int
 try:
     n = int(sys.argv[1])
-except ValueError as e:
+except ValueError as e:  # catch value errors if n is not an integer
     print(e)
     sys.exit('n must be integer')
 
@@ -34,6 +34,7 @@ def trial():
     Runs a trial, which is accomplished by generating and returning a list of
     randomly generated integers between 1 and 6.
     '''
+
     result = [random.randint(1, 6) for a in range(12)]
 
     return result
@@ -45,6 +46,7 @@ def check_trial(trial):
     to ignore duplicates, then comparing that set to the set of integers between
     1 and 6. Returns a boolean value based on comparison.
     '''
+
     return {1, 2, 3, 4, 5, 6} == set(trial)
 
 
@@ -56,22 +58,26 @@ def run_trials(n, set):
     the set. Trial data is written to an output file after each trial is run. An
     integer value of number of successes in the trial is returned.
     '''
+
+    # store number of successes
     success = 0
 
     # write results to output.txt file
     with open('restaurant_probability_trials.txt', mode='a') as output_txt:
 
+        # output headers
         output_txt.write(f'\n-----------------------------------------\n')
         output_txt.write(f'\nSet {set+1}\n\n')
 
         # run n trials
         for i in range(n):
+
             # run the trial and check the result
             result = trial()
             check = check_trial(result)
             outcome = 'success' if check else 'failure'
 
-            # write result to output file
+            # write results to output file
             output_txt.write(f'\n{result}\n')
             output_txt.write(f'{outcome}\n\n')
 
@@ -79,6 +85,7 @@ def run_trials(n, set):
             if (check):
                 success += 1
 
+    # return total number of successes in set of trials
     return success
 
 
@@ -90,9 +97,13 @@ def series(n):
     containing the number of successes in the trial and the success
     probability of the trial.
     '''
+
+    # list for storing results
     results = []
+
     # run series of 10 sets of n trials
     for i in range(10):
+
         # run trials and add successes to results
         successes = run_trials(n, i)
         results.append({
@@ -100,14 +111,17 @@ def series(n):
             'probability': Decimal(successes) / Decimal(n)
         })
 
+    # return list of results of series
     return results
 
 
 def series_probability(results):
     '''
     Calculates and returns series probability estimate by averaging the
-    probability for each set of trials.
+    probability for each set of trials. This function does not consider
+    significant digits, and is simply a rough estimate.
     '''
+
     subtotal = 0
 
     # iterate through each result and sum probabilities
@@ -123,10 +137,10 @@ results = series(n)
 probability = series_probability(results)
 
 
-# print results of trials to console
 print(f'\nTrials: {n:,}')
 print(f'\nSeries:')
 
+# iterate through all results and print to console
 for num, result in enumerate(results):
     print(f'\n{num+1}.')
     print(f"successes: {result['successes']:,}")
@@ -137,6 +151,8 @@ print(f'\nseries success probability (average): {probability}\n')
 
 # write results to output.txt file
 with open('restaurant_probability_output.txt', mode='w') as output_txt:
+
+    # output headers
     output_txt.write(f'\nTrials: {n:,}\n\nSeries:')
 
     # write results of each set of trials
